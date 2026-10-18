@@ -917,16 +917,18 @@ async function generarCotPDF() {
     addRow(doc,M,y,W,labelServicio(cotServicio),`$${fmtNum(calc.sub)}`,false);y+=20;
   }
   // Total
-  doc.setFillColor(184,151,42);doc.roundedRect(M,y,W-2*M,32,6,6,'F');
-  doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(255,255,255);
-  doc.text('TOTAL',M+14,y+21);
-  doc.text('$'+fmtNum(calc.total),W-M-14,y+21,{align:'right'});
   y+=10;
   // Anticipo en PDF
   if(calc.anticipo>0){
     addRow(doc,M,y,W,'Anticipo','$'+fmtNum(calc.anticipo),true);y+=22;
     addRow(doc,M,y,W,'Saldo pendiente','$'+fmtNum(calc.total-calc.anticipo),false);y+=22;
   }
+  y+=10;
+  doc.setFillColor(184,151,42);doc.roundedRect(M,y,W-2*M,32,6,6,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(255,255,255);
+  doc.text('TOTAL',M+14,y+21);
+  doc.text('$'+fmtNum(calc.total),W-M-14,y+21,{align:'right'});
+  y+=42;
   y+=16;
   // Notas
   if(notas){
@@ -941,8 +943,12 @@ async function generarCotPDF() {
   if(FIRMA_IMG && FIRMA_IMG.length>100){
     try{doc.addImage(FIRMA_IMG,'PNG',W/2-55,y,110,40);y+=44;}catch(e){}
     doc.setDrawColor(200,200,200);doc.line(W/2-70,y,W/2+70,y);
-    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(30,30,30);
-    
+    y+=14;
+    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(30,30,30);
+    doc.text('Luis Gerardo García Rangel',W/2,y,{align:'center'});
+    y+=14;
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(100,100,100);
+    doc.text('812 400 3388',W/2,y,{align:'center'});
   }
   await savePDF(doc, folio+'-'+cliente.replace(/\s/g,'_')+'.pdf');
 }
